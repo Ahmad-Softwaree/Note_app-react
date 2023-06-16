@@ -1,28 +1,37 @@
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
-import Home from "./pages/Home";
-import { Suspense, lazy } from "react";
-import Register from "./pages/Register";
-import PrivateRoutes from "./routes/PrivateRoutes";
-import Universe from "./components/Universe";
-import Login from "./pages/Login";
-import Layout from "./components/layout/Layout";
-import Profile from "./pages/Profile";
+import { Fragment, Suspense, lazy } from "react";
+import GoogleSuccess from "./pages/GoogleSuccess";
+import GoogleFailed from "./pages/GoogleFailed";
+const Register = lazy(() => import("./pages/Register"));
+const PrivateRoutes = lazy(() => import("./routes/PrivateRoutes"));
+const Universe = lazy(() => import("./components/Universe"));
+const Login = lazy(() => import("./pages/Login"));
+const Layout = lazy(() => import("./components/layout/Layout"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Fallback = lazy(() => import("./components/Fallback"));
+const Home = lazy(() => import("./pages/Home.jsx"));
+
 const routes = createBrowserRouter(
   createRoutesFromElements(
-    <Route element={<Universe />}>
-      <Route element={<Layout />}>
-        <Route path="/" element={<PrivateRoutes component={Home} />} />
-        <Route path="/profile" element={<PrivateRoutes component={Profile} />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
+    <Fragment>
+      <Route element={<Universe />}>
+        <Route element={<Layout />}>
+          <Route path="/" element={<PrivateRoutes component={Home} />} />
+
+          <Route path="/profile" element={<PrivateRoutes component={Profile} />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+        </Route>
       </Route>
-    </Route>
+      <Route path="/google/success" element={<GoogleSuccess />} />
+      <Route path="/google/failed" element={<GoogleFailed />} />
+    </Fragment>
   )
 );
 
 function App() {
   return (
-    <Suspense>
+    <Suspense fallback={<Fallback />}>
       <RouterProvider router={routes} />
     </Suspense>
   );

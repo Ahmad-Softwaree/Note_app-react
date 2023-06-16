@@ -4,6 +4,7 @@ import { login } from "../context/actions/authActions";
 import { Link, useNavigate } from "react-router-dom";
 import { Spinner } from "@chakra-ui/react";
 import { AlertContext } from "../context/alertContext";
+import { getGoogleAuth } from "../context/actions/passportActions";
 
 export default function Login() {
   const {
@@ -70,7 +71,19 @@ export default function Login() {
         >
           {loginLoading ? <Spinner className={`h-[30px] w-[30px]`} /> : "Sign In"}
         </button>
+
+        <button
+          onClick={() => getGoogleAuth(authDispatch, alertDispatch)}
+          type="button"
+          className={`flex flex-row justify-center items-center gap-2`}
+        >
+          <span>
+            <i className="fa-brands fa-google"></i>
+          </span>
+          <span>Sign In With Google</span>
+        </button>
       </form>
+
       <span className="font-light text-[12px] opacity-90">
         Don't have an account?{" "}
         <Link className={`text-blue font-bold`} to={`/register`}>

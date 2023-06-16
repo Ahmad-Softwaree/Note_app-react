@@ -1,4 +1,4 @@
-import { GET_AUTH_TOKEN_URL, LOGIN_URL, REGISTER_URL } from "../../url";
+import { GET_AUTH_TOKEN_URL, LOGIN_URL, REGISTER_URL, UPDATE_USER_URL } from "../../url";
 import { api, authApi } from "../../utils/api/api";
 import { setAxiosHeader } from "../../utils/axiosConfig";
 import { deleteCookie, getCookie, setCookie } from "../../utils/cookies";
@@ -12,13 +12,16 @@ import {
   REGISTER_FAIL,
   REGISTER_START,
   REGISTER_SUCCESS,
+  UPDATE_USER_FAIL,
+  UPDATE_USER_START,
+  UPDATE_USER_SUCCESS,
 } from "../type";
 import { setAlert } from "./alertAction";
+import { uploadImage } from "./supabaseActions";
 
 export const loadUser = async (authDispatch, alertDispatch) => {
   if (getCookie("user")) setAxiosHeader(getCookie("user"));
   try {
-    console.log(authApi.defaults.headers);
     const { data } = await authApi.get(`${GET_AUTH_TOKEN_URL}`);
     authDispatch({
       type: LOAD_USER,
@@ -81,6 +84,32 @@ export const login = async (authDispatch, alertDispatch, values, navigate) => {
     }
     deleteCookie("user");
     setAxiosHeader(null);
+  }
+};
+
+export const updateUser = async (authDispatch, alertDispatch, input, file, imageChanged, image) => {
+  try {
+    authDispatch({
+      type: UPDATE_USER_START,
+    });
+    if (imageChanged) {
+      var { path } = await uploadImage(file, authDispatch, alertDispatch);
+    }
+
+    const { data } = await authApi.put(`${UPDATE_USER_URL}`, { name: input, image: path || image });
+    authDispatch({
+      type: UPDATE_USER_SUCCESS,
+      payload: data,
+    });
+    setAlert(authDispatch, alertDispatch, null, "User Updated Successfully", "success");
+  } catch (error) {
+    if (Array.isArray(error.response.data)) {
+      error.response.data.forEach((err) => {
+        setAlert(authDispatch, alertDispatch, UPDATE_USER_FAIL, err, "fail");
+      });
+    } else {
+      setAlert(authDispatch, alertDispatch, UPDATE_USER_FAIL, error.response.data.error, "fail");
+    }
   }
 };
 

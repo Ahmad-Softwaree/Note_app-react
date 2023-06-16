@@ -14,6 +14,9 @@ export const authApi = axios.create({
   headers: {
     "Content-Type": "application/json",
     Authorization: getCookie("user"),
+    common: {
+      Authorization: getCookie("user"),
+    },
   },
 });
 
@@ -22,5 +25,8 @@ export const fileApi = axios.create({
   headers: {
     "Content-Type": "multipart/form-data",
     Authorization: getCookie("user"),
+    common: {
+      Authorization: getCookie("user"),
+    },
   },
 });

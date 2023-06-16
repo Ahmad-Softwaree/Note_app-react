@@ -2,7 +2,6 @@ import axios from "axios";
 import { authApi, fileApi } from "./api/api";
 export const setAxiosHeader = (token) => {
   if (token) {
-    console.log("set token to axios header");
     axios.defaults.headers.common.Authorization = token;
     authApi.defaults.headers.common.Authorization = token;
     authApi.defaults.headers.Authorization = token;
